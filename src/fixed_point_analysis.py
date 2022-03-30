@@ -29,7 +29,7 @@ def in_the_list(x, x_list, tol=1e-3):
     return False
 
 def sort_eigs(E, R):
-    # sort eigenvectors
+    # sort eigenvectors by its real values
     data = np.hstack([E.reshape(-1, 1), R.T])
     data = np.array(sorted(data, key=lambda l: np.real(l[0])))[::-1, :]
     E = data[:, 0]
@@ -40,11 +40,11 @@ def sort_by_distance(points):
     aligned_point_inds = []
     not_aligned_point_inds = list(range(points.shape[0]))
 
+    # first find the leftmost point
     ind = np.where(points[:, 0] == np.min(points[:, 0]))[0][0]
     aligned_point_inds.append(ind)
     not_aligned_point_inds.remove(ind)
-    # first find the leftmost point
-    while len(not_aligned_point_inds) !=0:
+    while len(not_aligned_point_inds) != 0:
         point = points[aligned_point_inds[-1], :]
         dists = []
         for k in not_aligned_point_inds:
@@ -55,12 +55,11 @@ def sort_by_distance(points):
         aligned_point_inds.append(min_ind)
     return points[aligned_point_inds, :]
 
-
 def fI(x):
     tmp = (a * x - b)
     return tmp / (1 - np.exp(-d * tmp))
 
-def der_fI(x):  # correct
+def der_fI(x):
     tmp = (a * x - b)
     term1 = a / (1 - np.exp(-d * tmp))
     term2 = - a * tmp * d * np.exp(-d * tmp) / (1 - np.exp(-d * tmp)) ** 2
@@ -257,7 +256,8 @@ if __name__ == '__main__':
     diff = unstable_manifold[1:, :] - unstable_manifold[:-1, :]
     overlaps = []
     for i in range(diff.shape[0]):
-        l1 = diff[i, :]
+        l0 = diff[i, :]
+        l1 = selection_vects[i, :]
         l2 = drive_vects[i, :]
         overlaps.append(np.dot(l1, l2)/(np.linalg.norm(l1) * np.linalg.norm(l2)))
 
